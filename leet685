@@ -1,0 +1,75 @@
+
+class Solution {
+
+    int[] parent;
+
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+
+        int n = edges.length;
+
+        int[] indegree = new int[n + 1];
+
+        int[] edge1 = null;
+        int[] edge2 = null;
+
+   
+        for (int[] edge : edges) {
+
+            int u = edge[0];
+            int v = edge[1];
+
+            if (indegree[v] == 0) {
+                indegree[v] = u;
+            } else {
+                edge1 = new int[]{indegree[v], v};
+                edge2 = new int[]{u, v};
+            }
+        }
+
+        parent = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
+        }
+
+   
+        for (int[] edge : edges) {
+
+           
+            if (edge2 != null &&
+                edge[0] == edge2[0] &&
+                edge[1] == edge2[1]) {
+                continue;
+            }
+
+            int u = edge[0];
+            int v = edge[1];
+
+            int pu = find(u);
+            int pv = find(v);
+
+            if (pu == pv) {
+
+              
+                if (edge1 != null) {
+                    return edge1;
+                }
+
+                return edge;
+            }
+
+            parent[pv] = pu;
+        }
+
+        return edge2;
+    }
+
+    public int find(int x) {
+
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+
+        return parent[x];
+    }
+}
